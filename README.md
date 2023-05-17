@@ -2,6 +2,22 @@ import json
 import requests
 
 def lambda_handler(event, context):
+
+    if 'Records' in event and len(event['Records']) > 0:
+        if event['Records'][0].get('eventSource') == 'aws:codecommit':
+            # CodeCommitのトリガーで呼び出された場合の処理
+            print("CodeCommitのトリガーで呼び出されました")
+        elif event['Records'][0].get('EventSource') == 'aws:sns':
+            # AWS SNSの通知で呼び出された場合の処理
+            print("AWS SNSの通知で呼び出されました")
+        else:
+            # その他の場合の処理
+            print("その他のトリガーで呼び出されました")
+    else:
+        # イベントが存在しない場合の処理
+        print("イベントが存在しません")
+
+
     # BitriseのAPIトークンとApp Slugを設定
     bitrise_token = 'IMTCRipnRVnFzJ1sSUyymAtEU0XuJYGw-fl9E95pBS_3OYIutbBjJm8k2zf1H9qCcxPFNYR3sLzNJ-jXSoJtgg'
     app_slug = '323cf1e3-f93c-49b2-9347-470950f0e4dc'
@@ -33,3 +49,4 @@ def lambda_handler(event, context):
         return 'Build triggered successfully'
     else:
         return f'Failed to trigger build. Status code: {response.status_code}, Error: {response.text}'
+       
